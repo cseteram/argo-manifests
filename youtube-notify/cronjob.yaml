@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mdr
+spec:
+  schedule: "0,15,30,45 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mdr
+            image: ghcr.io/cseteram/mdr:main
+            imagePullPolicy: Always
+            volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+          volumes:
+          - name: config
+            secret:
+              secretName: mdr-config
+              defaultMode: 0400
+          restartPolicy: OnFailure
